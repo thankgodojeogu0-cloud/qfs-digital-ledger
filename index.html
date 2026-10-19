@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>QFS Digital Ledger</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #122238;
+      --panel2: #13243b;
+      --border: #24445e;
+      --accent: #55e6c1;
+      --text: #ffffff;
+      --muted: #b8c8d9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: var(--bg);
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 4px 0;
+    }
+
+    button:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 3px;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    header h1,
+    h2 {
+      color: var(--accent);
+    }
+
+    .subtitle,
+    .note {
+      color: var(--muted);
+    }
+
+    .note {
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 18px 0;
+      min-width: 0;
+    }
+
+    .balance {
+      font-size: clamp(32px, 8vw, 44px);
+      margin: 4px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .asset-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .asset-row:last-child {
+      border-bottom: 0;
+    }
+
+    .asset-name {
+      font-weight: bold;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .actions button {
+      width: 100%;
+      padding: 13px 5px;
+    }
+
+    .action-panel {
+      background: #091525;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .transaction {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+
+    .transaction:last-child {
+      border-bottom: 0;
+    }
+
+    .qfs-future {
+      background: #081525;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-top: 28px;
+      overflow: hidden;
+    }
+
+    .qfs-heading {
+      text-align: center;
+      padding: 22px 4px;
+    }
+
+    .qfs-logo {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      color: var(--accent);
+      font-size: 23px;
+      font-weight: 900;
+      margin: auto;
+      box-shadow: 0 0 24px #22e8d455;
+    }
+
+    .eyebrow,
+    .tag {
+      color: var(--accent);
+      letter-spacing: 2px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .qfs-heading h1 {
+      font-size: clamp(30px, 8vw, 48px);
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .qfs-heading h1 span {
+      color: var(--accent);
+    }
+
+    .qfs-heading p,
+    .product p {
+      color: #c8d8e9;
+      line-height: 1.7;
+    }
+
+    .banner {
+      text-align: center;
+      padding: 25px 14px;
+      border: 1px solid #157e91;
+      border-radius: 18px;
+      margin-bottom: 20px;
+      background:
+        radial-gradient(ellipse at top, #12516a, transparent 70%),
+        linear-gradient(135deg, #102c43, #06101e);
+    }
+
+    .globe {
+      font-size: 54px;
+    }
+
+    .banner h2 {
+      overflow-wrap: anywhere;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .product {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid #176b83;
+      border-radius: 18px;
+      background:
+        radial-gradient(ellipse at top right, #12475a66, transparent 60%),
+        #10233a;
+      box-shadow: 0 8px 28px #0005;
+    }
+
+    .product h2 {
+      font-size: 21px;
+    }
+
+    .product ul {
+      color: #d4e8f2;
+      padding-left: 20px;
+      line-height: 1.9;
+    }
+
+    .art {
+      text-align: center;
+      font-size: 44px;
+      color: var(--accent);
+      padding: 8px;
+      text-shadow: 0 0 18px #00eacb99;
+    }
+
+    .product button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px 8px;
+      border: 1px solid var(--accent);
+      background: #0e3544;
+      color: var(--accent);
+    }
+
+    .payment-card {
+      padding: 16px;
+      border: 1px solid #b8a36b;
+      border-radius: 12px;
+      min-height: 150px;
+      background: linear-gradient(135deg, #353b43, #080b11 65%, #343124);
+      box-shadow: 0 8px 20px #0007;
+    }
+
+    .card-brand {
+      color: #e8d49c;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .chip {
+      color: #e6ce8c;
+      font-size: 27px;
+      margin-top: 12px;
+    }
+
+    .card-number {
+      color: #d9d6c7;
+      margin: 12px 0;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #d8c99c;
+      font-size: 10px;
+    }
+
+    .phone {
+      width: 112px;
+      height: 190px;
+      margin: 18px auto;
+      border: 4px solid #93adbf;
+      border-radius: 22px;
+      padding: 7px;
+      background: #050a11;
+      box-shadow: 0 0 20px #24c8e733;
+    }
+
+    .phone-screen {
+      height: 100%;
+      border-radius: 14px;
+      background: radial-gradient(circle, #087c9c, #061326 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      color: var(--accent);
+    }
+
+    .phone-screen span {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .phone-screen strong {
+      font-size: 22px;
+    }
+
+    .phone-screen small {
+      font-size: 7px;
+      text-align: center;
+    }
+
+    .laptop {
+      margin: 26px auto 35px;
+      max-width: 240px;
+    }
+
+    .laptop-screen {
+      aspect-ratio: 1.45;
+      border: 5px solid #91a9b8;
+      border-radius: 10px 10px 4px 4px;
+      background: radial-gradient(circle, #075c85, #06101f 72%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      box-shadow: 0 0 20px #00cce533;
+    }
+
+    .laptop-screen span {
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .laptop-screen small {
+      font-size: 9px;
+    }
+
+    .laptop-base {
+      height: 10px;
+      background: linear-gradient(#c1d0da, #536779);
+      border-radius: 2px 2px 12px 12px;
+      margin: 0 -12px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 28px 8px 10px;
+      color: var(--muted);
+    }
+
+    .modal[hidden] {
+      display: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #020711ed;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 420px;
+      background: #10233a;
+      border: 1px solid var(--accent);
+      border-radius: 18px;
+      padding: 24px;
+      line-height: 1.7;
+    }
+
+    .close {
+      float: right;
+      background: transparent;
+      color: white;
+      font-size: 22px;
+      padding: 2px 8px;
+    }
+
+    @media (min-width: 650px) {
+      body {
+        max-width: 1100px;
+        margin: auto;
+        padding: 24px;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="qfs-logo">QFS</div>
+    <h1>QFS DIGITAL LEDGER</h1>
+    <p class="subtitle">Your Digital Asset Dashboard</p>
+    <p class="note">Independent concept website • Demo mode</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>My Wallet</h2>
+      <p>Total demo balance</p>
+      <h1 class="balance">$0.00</h1>
+      <p class="note">
+        Demonstration only. No real funds or wallet are connected.
+      </p>
+      <button onclick="showAction('Connect Wallet')">
+        Connect Wallet
+      </button>
+      <div id="wallet-status" class="note" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>Digital Assets</h2>
+      <div class="asset-row">
+        <span class="asset-name">₿ Bitcoin (BTC)</span>
+        <strong>$0.00</strong>
+      </div>
+      <div class="asset-row">
+        <span class="asset-name">◆ Ethereum (ETH)</span>
+        <strong>$0.00</strong>
+      </div>
+      <div class="asset-row">
+        <span class="asset-name">◉ USD Coin (USDC)</span>
+        <strong>$0.00</strong>
+      </div>
+      <p class="note">
+        These are sample values, not live market prices or account balances.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Wallet Actions</h2>
+      <div class="actions">
+        <button onclick="showAction('Receive')">↓ Receive</button>
+        <button onclick="showAction('Deposit')">+ Deposit</button>
+        <button onclick="showAction('Send')">↑ Send</button>
+      </div>
+      <div id="action-panel" class="action-panel" aria-live="polite">
+        Select an action to view information.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>QFS Card</h2>
+      <p>Digital payment card preview</p>
+      <div class="payment-card">
+        <div class="card-brand">◉ QFS</div>
+        <div class="chip">▦</div>
+        <div class="card-number">•••• &nbsp; •••• &nbsp; ••••</div>
+        <div class="card-footer">
+          <span>DIGITAL CARD CONCEPT</span>
+          <span>QFS</span>
+        </div>
+      </div>
+      <p class="note">
+        Concept design only. No real payment card has been issued.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Transaction History</h2>
+      <p class="note">Your sample activity will appear here.</p>
+      <div id="transactions" aria-live="polite">
+        <p>No transactions yet.</p>
+      </div>
+      <button onclick="addDemoTransaction()">
+        + Add Demo Transaction
+      </button>
+      <button onclick="clearDemoTransactions()">
+        Clear Demo History
+      </button>
+      <p class="note">
+        Demo activity only. This does not send or receive cryptocurrency.
+      </p>
+    </section>
+
+    <section class="qfs-future">
+      <div class="qfs-heading">
+        <div class="qfs-logo">QFS</div>
+        <p class="eyebrow">THE FUTURE ECOSYSTEM</p>
+        <h1>NESARA <span>GESARA</span></h1>
+        <h2>A Vision of a Better Future</h2>
+        <p>
+          Explore a futuristic concept combining digital finance,
+          wellness, communication and technology.
+        </p>
+      </div>
+
+      <div class="banner">
+        <div class="globe">🌐</div>
+        <h2>QFS DIGITAL LEDGER</h2>
+        <p>Financial Technology • Wellness • Innovation</p>
+        <p class="note">
+          This is an independent concept website. Claims about
+          NESARA/GESARA and quantum financial system capabilities
+          are not verified by this demonstration.
+        </p>
+      </div>
+
+      <div class="product-grid">
+        <article class="product">
+          <div class="art">✧ ⚕ ✧</div>
+          <p class="tag">WELLNESS CONCEPT</p>
+          <h2>Quantum Healing MedBed</h2>
+          <p>
+            A futuristic wellness concept inspired by advanced
+            medical technology and restorative care.
+          </p>
+          <ul>
+            <li>Wellness innovation</li>
+            <li>Future healthcare concepts</li>
+            <li>Human-centered design</li>
+          </ul>
+          <button onclick="qfsInfo('MedBed')">
+            Explore MedBed →
+          </button>
+        </article>
+
+        <article class="product">
+          <div class="art">▰</div>
+          <p class="tag">CARD DESIGN CONCEPT</p>
+          <h2>QFS Card</h2>
+          <div class="payment-card">
+            <div class="card-brand">◉ QFS</div>
+            <div class="chip">▦</div>
+            <div class="card-number">•••• &nbsp; •••• &nbsp; ••••</div>
+            <div class="card-footer">
+              <span>DIGITAL CARD</span>
+              <span>QFS</span>
+            </div>
+          </div>
+          <p>
+            A premium futuristic card concept for a digital
+            finance website.
+          </p>
+          <button onclick="qfsInfo('QFS Card')">
+            Explore QFS Card →
+          </button>
+        </article>
+
+        <article class="product">
+          <div class="art">▯</div>
+          <p class="tag">MOBILE TECHNOLOGY</p>
+          <h2>QPhone</h2>
+          <div class="phone">
+            <div class="phone-screen">
+              <span>QFS</span>
+              <strong>10:24</strong>
+              <small>CONNECT • CREATE • EXPLORE</small>
+            </div>
+          </div>
+          <p>
+            A futuristic smartphone concept for communication,
+            creativity and digital tools.
+          </p>
+          <button onclick="qfsInfo('QPhone')">
+            Explore QPhone →
+          </button>
+        </article>
+
+        <article class="product">
+          <div class="art">▱</div>
+          <p class="tag">COMPUTING TECHNOLOGY</p>
+          <h2>QLaptop</h2>
+          <div class="laptop">
+            <div class="laptop-screen">
+              <span>QFS</span>
+              <small>CREATE YOUR FUTURE</small>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+          <p>
+            A laptop concept for learning, productivity,
+            website building and digital innovation.
+          </p>
+          <button onclick="qfsInfo('QLaptop')">
+            Explore QLaptop →
+          </button>
+        </article>
+      </div>
+
+      <div class="footer">
+        <h2>Imagine What's Possible</h2>
+        <p>
+          Financial technology • Wellness innovation • Global connectivity
+        </p>
+        <p class="note">
+          Product illustrations are conceptual designs, not proof
+          of available products or services.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div id="qfs-modal" class="modal" hidden
+       role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal()" aria-label="Close">
+        ✕
+      </button>
+      <h2 id="modal-title">Explore</h2>
+      <p id="modal-text"></p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function showAction(action) {
+      const panel = document.getElementById("action-panel");
+      const walletStatus = document.getElementById("wallet-status");
+
+      const messages = {
+        "Receive":
+          "Receive Crypto: A receiving address and QR code require a supported wallet. This demo does not generate real deposit addresses.",
+
+        "Deposit":
+          "Deposit: No payment provider is connected. Do not send money to this demo website. Real deposits require a verified provider and secure payment integration.",
+
+        "Send":
+          "Send Crypto: No wallet is connected and no transfer can be made. Real transfers require a supported wallet, network verification and explicit transaction approval.",
+
+        "Connect Wallet":
+          "Wallet connection is not implemented yet. This demonstration does not request your seed phrase, private keys or wallet password."
+      };
+
+      panel.textContent = messages[action] ||
+        "This feature is currently a demonstration.";
+
+      walletStatus.textContent = action === "Connect Wallet"
+        ? "Demo mode: no wallet connection has been made."
+        : "";
+    }
+
+    function addDemoTransaction() {
+      const history = document.getElementById("transactions");
+
+      const emptyMessage = history.querySelector(".empty-message");
+      if (emptyMessage) {
+        emptyMessage.remove();
+      }
+
+      const item = document.createElement("div");
+      item.className = "transaction";
+
+      const title = document.createElement("strong");
+      title.textContent = "Demo Activity";
+
+      const details = document.createElement("p");
+      details.className = "note";
+      details.textContent =
+        "Sample entry • " + new Date().toLocaleString();
+
+      item.appendChild(title);
+      item.appendChild(details);
+      history.prepend(item);
+    }
+
+    function clearDemoTransactions() {
+      const history = document.getElementById("transactions");
+      history.replaceChildren();
+
+      const message = document.createElement("p");
+      message.className = "empty-message";
+      message.textContent = "No transactions yet.";
+
+      history.appendChild(message);
+    }
+
+    function qfsInfo(product) {
+      const descriptions = {
+        "MedBed":
+          "A futuristic wellness concept, not a verified medical device or treatment. Consult qualified healthcare professionals for medical care.",
+
+        "QFS Card":
+          "A visual payment-card mockup. It is not a bank card and cannot make payments. A legitimate card issuer would need to provide an actual card.",
+
+        "QPhone":
+          "A smartphone concept illustration. It does not represent a manufactured or available device.",
+
+        "QLaptop":
+          "A laptop concept illustration. It does not represent a manufactured or available device."
+      };
+
+      document.getElementById("modal-title").textContent = product;
+      document.getElementById("modal-text").textContent =
+        descriptions[product] || "Concept product information.";
+
+      document.getElementById("qfs-modal").hidden = false;
+    }
+
+    function closeModal() {
+      document.getElementById("qfs-modal").hidden = true;
+    }
+
+    document.getElementById("qfs-modal").addEventListener(
+      "click",
+      function(event) {
+        if (event.target === this) {
+          closeModal();
+        }
+      }
+    );
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
